@@ -1,7 +1,9 @@
 import numpy as np
 from numpy.linalg import eig
 from numpy.linalg import norm
-data = open('pageRank-gr0.California.txt', 'r')
+#data = open('pageRank-gr0.California.txt', 'r')
+
+data = open('C:/Users/Mithushan/Desktop/Pagerank/Pagerank/pageRank-gr0.California.txt', 'r')
 
 # Calculating size of edge list
 # data_tot_lines = data.readlines()
@@ -89,7 +91,7 @@ while res > epsilon:
     beta = 1 - np.linalg.norm(y, ord=1)
     y = y + beta * v
     res = np.linalg.norm(y - z, ord=1)
-
+    z=y
 print(y)
 
 
