@@ -30,38 +30,38 @@ while a:
 for i in range(len(edge_list)):
     M[edge_list[i][1]][edge_list[i][0]] = 1
 
-row_sum = M.sum(axis=1)
-m1 = max(row_sum)
-print(np.where(row_sum == m1))
+# row_sum = M.sum(axis=1)
+# m1 = max(row_sum)
+# print(np.where(row_sum == m1))
 
 # Scaling with number of outlinks for each column
 column_sum = M.sum(axis=0)
 
 # Create d
-d = np.zeros(len(column_sum))
-for x in range(len(column_sum)):
- if(column_sum[x] == 0):
-     d[x]=1
+# d = np.zeros(len(column_sum))
+# for x in range(len(column_sum)):
+#  if(column_sum[x] == 0):
+#      d[x]=1
 
+# To prevent division with 0
 for x in range(len(column_sum)):
     if column_sum[x] == 0:
         column_sum[x] = 1
 
+# Make matrix column stochastic
 Mt=M.T
 column_sum_t = column_sum.T
 Mt = Mt/column_sum_t
-M=Mt.T
+Q=Mt.T
 
-e = np.ones(len(column_sum))
-ed = np.outer(e,d)
+# e = np.ones(len(column_sum))
+# ed = np.outer(e,d)
 
-P = M + 1/len(column_sum) * ed
+# P = Q + 1/len(column_sum) * ed
 
-alpha = 0.85
-eeT = np.outer(e,e)
-A = alpha * P + (1 - alpha) * 1/len(column_sum) * eeT
-
-
+# alpha = 0.85
+# eeT = np.outer(e,e)
+# A = alpha * P + (1 - alpha) * 1/len(column_sum) * eeT
 
 epsilon = 10e-5
 residual = 1
@@ -78,31 +78,46 @@ i = 0
 #     i = i + 1
 # print(z)
 
-r = np.ones(len(column_sum)) / len(column_sum)
-rhat = np.zeros(len(column_sum))
-# print(r.shape)
-print(M.shape)
-print(rhat.shape)
+z = np.ones(len(column_sum)) / len(column_sum)
+v = np.ones(len(column_sum)) / len(column_sum)
+alpha = 0.85
+epsilon = 10e-4
+res = 1
 
-while residual > epsilon:
-    rhat = alpha * np.matmul(A, r)
-    rhat = rhat / np.linalg.norm(rhat, ord=1) 
-    residual = np.linalg.norm(rhat - r, ord=1)
-    r = rhat
-    print(residual)
+while res > epsilon:
+    y = alpha * np.matmul(Q, z)
+    beta = 1 - np.linalg.norm(y, ord=1)
+    y = y + beta * v
+    res = np.linalg.norm(y - z, ord=1)
 
-print(rhat)
+print(y)
 
-import matplotlib.pyplot as plt
-fig = plt.figure()
-ax = fig.add_axes([0, 0, 1, 1])
-x = np.arange(len(column_sum))
-y = rhat
-print(x.shape)
-print(y.shape)
-ax.stem(x,y)
-plt.show()
 
-m = max(rhat)
-b = np.where(rhat == m)
-print(b)
+# r = np.ones(len(column_sum)) / len(column_sum)
+# rhat = np.zeros(len(column_sum))
+# # print(r.shape)
+# print(M.shape)
+# print(rhat.shape)
+
+# while residual > epsilon:
+#     rhat = alpha * np.matmul(A, r)
+#     rhat = rhat / np.linalg.norm(rhat, ord=1) 
+#     residual = np.linalg.norm(rhat - r, ord=1)
+#     r = rhat
+#     print(residual)
+
+# print(rhat)
+
+# import matplotlib.pyplot as plt
+# fig = plt.figure()
+# ax = fig.add_axes([0, 0, 1, 1])
+# x = np.arange(len(column_sum))
+# y = rhat
+# print(x.shape)
+# print(y.shape)
+# ax.stem(x,y)
+# plt.show()
+
+# m = max(rhat)
+# b = np.where(rhat == m)
+# print(b)
